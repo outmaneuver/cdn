@@ -1,0 +1,13 @@
+{
+  "name": "cdn-system",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm start",
+    "client": "cd frontend && npm start"
+  },
+  "dependencies": {
+    "concurrently": "^6.2.1"
+  }
+}
