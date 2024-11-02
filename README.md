@@ -11,6 +11,7 @@ This repository contains a CDN system with a dashboard that allows users to uplo
 - Profile page to change password and view registration email
 - Settings page to edit upload settings
 - Dynamic ShareX config generation based on user settings
+- Bio page creation and customization
 
 ## Backend
 
@@ -28,6 +29,12 @@ The backend is implemented using Node.js and Express, providing the following en
 - `DELETE /files/:id`: Delete a file
 - `GET /statistics`: Get upload statistics
 - `GET /sharex-config`: Generate ShareX config dynamically
+
+### Bio Page Management
+
+- `POST /bio/create`: Create a bio page
+- `GET /bio/:userId`: Get a bio page
+- `PUT /bio/update`: Update a bio page
 
 ### Models
 
@@ -47,6 +54,8 @@ The frontend is implemented using React, providing the following components:
 - `Statistics`: Component for displaying upload statistics
 - `Profile`: Component for user profile
 - `Settings`: Component for user settings
+- `BioPage`: Component for displaying bio pages
+- `BioPageForm`: Component for creating and editing bio pages
 
 ## Setup
 
@@ -83,6 +92,8 @@ The frontend is implemented using React, providing the following components:
 3. Use the dashboard to upload files, manage uploads, and view statistics.
 4. Edit profile and upload settings as needed.
 5. Generate ShareX config dynamically based on user settings.
+6. Create and customize bio pages using the bio page form.
+7. View bio pages by navigating to the bio page URL.
 
 ## API Endpoints
 
@@ -118,3 +129,16 @@ The frontend is implemented using React, providing the following components:
 - `GET /sharex-config`
   - Request headers: `{ "Authorization": "Bearer <token>" }`
   - Response: `{ "Name": "string", "DestinationType": "string", "RequestType": "string", "RequestURL": "string", "FileFormName": "string", "Headers": "object", "Arguments": "object" }`
+
+### Bio Page Management
+
+- `POST /bio/create`
+  - Request body: `{ "userId": "string", "name": "string", "bio": "string", "socialLinks": "array", "profilePicture": "string" }`
+  - Response: `{ "message": "Bio page created successfully" }`
+
+- `GET /bio/:userId`
+  - Response: `{ "name": "string", "bio": "string", "socialLinks": "array", "profilePicture": "string" }`
+
+- `PUT /bio/update`
+  - Request body: `{ "userId": "string", "name": "string", "bio": "string", "socialLinks": "array", "profilePicture": "string" }`
+  - Response: `{ "message": "Bio page updated successfully" }`

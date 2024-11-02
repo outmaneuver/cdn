@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Register from './components/Register';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import BioPage from './components/BioPage';
+import BioPageForm from './components/BioPageForm';
 
 function App() {
   return (
@@ -12,6 +14,8 @@ function App() {
           <Route path="/register" component={Register} />
           <Route path="/login" component={Login} />
           <Route path="/dashboard" component={Dashboard} />
+          <Route path="/bio/:userId" component={BioPage} />
+          <Route path="/bio-form" component={BioPageForm} />
         </Switch>
       </div>
     </Router>
