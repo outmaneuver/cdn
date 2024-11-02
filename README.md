@@ -85,6 +85,18 @@ The frontend is implemented using React, providing the following components:
    npm start
    ```
 
+### Combined Start
+
+1. Install dependencies for both backend and frontend:
+   ```bash
+   npm install
+   ```
+
+2. Start both backend and frontend together:
+   ```bash
+   npm run dev
+   ```
+
 ## Usage
 
 1. Register a new user on the registration page.

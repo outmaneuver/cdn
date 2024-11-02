@@ -9,9 +9,9 @@ const authRoutes = require('./routes/auth');
 const fileRoutes = require('./routes/files');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
-mongoose.connect('mongodb://localhost:27017/cdn', {
+mongoose.connect('mongodb+srv://<username>:<password>@cluster0.mongodb.net/cdn?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
