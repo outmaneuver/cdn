@@ -26,6 +26,32 @@ const userSchema = new mongoose.Schema({
       default: '',
     },
   },
+  bioPage: {
+    name: {
+      type: String,
+      default: '',
+    },
+    bio: {
+      type: String,
+      default: '',
+    },
+    socialLinks: [
+      {
+        platform: {
+          type: String,
+          default: '',
+        },
+        url: {
+          type: String,
+          default: '',
+        },
+      },
+    ],
+    profilePicture: {
+      type: String,
+      default: '',
+    },
+  },
 });
 
 userSchema.pre('save', async function (next) {
