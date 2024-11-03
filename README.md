@@ -12,18 +12,17 @@ A fullstack TypeScript application for managing and delivering digital content w
 - 📊 Analytics dashboard
 
 ## Tech Stack
-- Backend: Node.js + Express.js, TypeScript, MongoDB + Mongoose
-- Frontend: React 18, TypeScript, Material-UI, React Query
-- Testing: Jest + React Testing Library
+- **Backend**: Node.js + Express.js, TypeScript, MongoDB + Mongoose
+- **Frontend**: React 18, TypeScript, Material-UI, React Query
+- **Build Tools**: Vite, TypeScript
+- **Testing**: Jest
 
-## Getting Started
-
-### Prerequisites
+## Prerequisites
 - Node.js 16+
 - MongoDB
 - npm or yarn
 
-### Setup
+## Setup
 
 1. Clone the repository:
 ```bash
@@ -31,9 +30,9 @@ git clone https://github.com/username/project.git
 cd project
 ```
 
-2. Install all dependencies:
+2. Install dependencies:
 ```bash
-npm run install-all
+npm install
 ```
 
 3. Set up environment variables:
@@ -41,37 +40,38 @@ npm run install-all
 cp .env.example .env
 ```
 
-4. Update the 
-
-.env
-
- file with your configuration:
+4. Update the `.env` file with your configuration:
 ```env
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/cdn?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/cms?retryWrites=true&w=majority
 PORT=5000
-JWT_SECRET=your_jwt_secret_key
+JWT_SECRET=your_secure_jwt_secret_here
 ```
 
-### Development
+## Development
 
-Run both frontend and backend in development mode:
+Start the development server:
 ```bash
+# Start both frontend and backend
 npm run dev
 ```
 
-### Production Build
+The backend will run on `http://localhost:5000` and the frontend on `http://localhost:5173`
 
-Build both frontend and backend:
+## Production Build
+
+Build and start the application:
 ```bash
 npm run build
-```
-
-Start the production server:
-```bash
 npm start
 ```
 
-## Contribution Guidelines
+## Available Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm test` - Run tests
+
+## Contributing
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
