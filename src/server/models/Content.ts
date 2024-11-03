@@ -1,17 +1,32 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { Content } from '../types';
+import mongoose from 'mongoose';
+import type { Content } from '../types/index.js';
 
-export interface ContentDocument extends Omit<Content, 'id'>, Document {
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const contentSchema = new Schema({
-  title: { type: String, required: true },
-  body: { type: String, required: true },
-  authorId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+const contentSchema = new mongoose.Schema<Content>({
+  title: {
+    type: String,
+    required: true,
+  },
+  body: {
+    type: String,
+    required: true,
+  },
+  status: {
+    type: String,
+    enum: ['draft', 'published'],
+    default: 'draft'
+  },
+  category: String,
+  authorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  views: {
+    type: Number,
+    default: 0
+  },
 }, {
   timestamps: true
 });
 
-export const ContentModel = mongoose.model<ContentDocument>('Content', contentSchema); 
+export const ContentModel = mongoose.model<Content>('Content', contentSchema); 

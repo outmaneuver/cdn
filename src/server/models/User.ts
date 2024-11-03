@@ -1,16 +1,54 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { User } from '../types';
+import mongoose from 'mongoose';
+import type { User } from '../types/index.js';
 
-export interface UserDocument extends Omit<User, 'id'>, Document {
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const userSchema = new Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+const userSchema = new mongoose.Schema<User>({
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    unique: true,
+    trim: true,
+    lowercase: true,
+  },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    minlength: [6, 'Password must be at least 6 characters'],
+  },
+  name: {
+    type: String,
+    required: false,
+    trim: true,
+  },
+  role: {
+    type: String,
+    enum: ['admin', 'user'],
+    default: 'user',
+    required: true,
+  },
+  lastActive: {
+    type: Date,
+    default: Date.now,
+  },
+  username: {
+    type: String,
+    unique: true,
+    sparse: true,
+    trim: true,
+  },
+  displayName: {
+    type: String,
+    trim: true,
+  },
+  avatarUrl: {
+    type: String,
+    default: '',
+  },
+  profileViews: {
+    type: Number,
+    default: 0,
+  },
 }, {
-  timestamps: true
+  timestamps: true,
 });
 
-export const UserModel = mongoose.model<UserDocument>('User', userSchema); 
+export const UserModel = mongoose.model<User>('User', userSchema); 

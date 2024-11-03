@@ -1,17 +1,13 @@
-import { Router, Request, Response } from 'express';
-import { AuthRequest, CustomResponse } from '../types';
+import express from 'express';
+import { AuthController } from '../controllers/auth.js';
+import { validateRegister, validateLogin } from '../middleware/validation.js';
 
-const router = Router();
+const router = express.Router();
+const authController = new AuthController();
 
-// Authentication routes
-router.post('/login', (req: Request, res: Response) => {
-  // TODO: Implement login
-  res.json({ message: 'Login endpoint' });
-});
-
-router.post('/register', (req: Request, res: Response) => {
-  // TODO: Implement registration
-  res.json({ message: 'Register endpoint' });
-});
+router.post('/register', validateRegister, authController.register.bind(authController));
+router.post('/login', validateLogin, authController.login.bind(authController));
+router.post('/logout', authController.logout.bind(authController));
+router.get('/me', authController.getCurrentUser.bind(authController));
 
 export const authRouter = router; 
