@@ -17,6 +17,7 @@ export default defineConfig({
       }
     }
   },
+  root: '.',
   optimizeDeps: {
     exclude: ['punycode']
   }
