@@ -7,6 +7,7 @@ import Login from '@/pages/Auth/Login';
 import Register from '@/pages/Auth/Register';
 import Dashboard from '@/pages/Dashboard';
 import ContentList from '@/pages/Content/List';
+import ContentEdit from '@/pages/Content/Edit';
 import Analytics from '@/pages/Analytics';
 import Settings from '@/pages/Settings';
 
@@ -30,9 +31,9 @@ const AppRoutes: React.FC = () => {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/" element={user ? <Navigate to="/dashboard" /> : <LandingPage />} />
-      <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
-      <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
       {/* Protected routes */}
       <Route path="/dashboard" element={
@@ -43,6 +44,16 @@ const AppRoutes: React.FC = () => {
       <Route path="/content" element={
         <ProtectedRoute>
           <ContentList />
+        </ProtectedRoute>
+      } />
+      <Route path="/content/new" element={
+        <ProtectedRoute>
+          <ContentEdit />
+        </ProtectedRoute>
+      } />
+      <Route path="/content/edit/:id" element={
+        <ProtectedRoute>
+          <ContentEdit />
         </ProtectedRoute>
       } />
       <Route path="/analytics" element={
@@ -62,4 +73,4 @@ const AppRoutes: React.FC = () => {
   );
 };
 
-export default AppRoutes; 
+export default AppRoutes;

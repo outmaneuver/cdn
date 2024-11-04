@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { ApiError } from '@/types';
 
 export const api = axios.create({
   baseURL: '/api',
@@ -11,4 +12,21 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
-}); 
+});
+
+api.interceptors.response.use(
+  response => response,
+  error => {
+    const apiError: ApiError = {
+      message: error.response?.data?.message || 'An error occurred',
+      status: error.response?.status || 500
+    };
+    
+    if (apiError.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    
+    return Promise.reject(apiError);
+  }
+);

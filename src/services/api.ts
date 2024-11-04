@@ -36,10 +36,28 @@ api.interceptors.response.use(
   }
 );
 
-// Add this function to your existing api.ts file
+export const contentApi = {
+  getAll: () => api.get('/content'),
+  getOne: (id: string) => api.get(`/content/${id}`),
+  create: (data: ContentPayload) => api.post('/content', data),
+  update: (id: string, data: ContentPayload) => api.put(`/content/${id}`, data),
+  delete: (id: string) => api.delete(`/content/${id}`)
+};
+
+export const analyticsApi = {
+  getDashboardMetrics: () => api.get('/analytics/dashboard'),
+  getContentMetrics: () => api.get('/analytics/content'),
+  getUserMetrics: () => api.get('/analytics/users')
+};
+
+export const settingsApi = {
+  get: () => api.get('/settings'),
+  update: (data: SettingsPayload) => api.put('/settings', data)
+};
+
 export const fetchDashboardStats = async (): Promise<DashboardStats> => {
   const { data } = await api.get('/analytics/dashboard');
   return data;
 };
 
-export default api; 
+export default api;

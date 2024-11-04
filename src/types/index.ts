@@ -13,7 +13,7 @@ export interface AuthResponse {
   user: User;
 }
 
-export interface ApiError {
+interface ApiError {
   message: string;
   status: number;
-} 
+}

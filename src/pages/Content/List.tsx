@@ -2,10 +2,9 @@ import React from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Button, Typography, Box } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import { fetchContent } from '../../services/api';
+import { fetchContent } from '@/services/api';
 import { useNavigate } from 'react-router-dom';
-import type { Content } from '../../types/api';
-import { format } from 'date-fns';
+import type { Content } from '@/types/api';
 
 const ContentList: React.FC = () => {
   const navigate = useNavigate();
@@ -16,18 +15,19 @@ const ContentList: React.FC = () => {
 
   const columns: GridColDef[] = [
     { field: 'title', headerName: 'Title', flex: 1 },
+    { field: 'status', headerName: 'Status', width: 120 },
     { 
       field: 'createdAt', 
       headerName: 'Created', 
-      flex: 1,
+      width: 200,
       valueFormatter: (params) => format(new Date(params.value), 'PPP')
     },
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 1,
+      width: 120,
       renderCell: (params) => (
-        <Button onClick={() => navigate(`/content/${params.row.id}`)}>
+        <Button onClick={() => navigate(`/content/edit/${params.row.id}`)}>
           Edit
         </Button>
       ),
@@ -61,4 +61,4 @@ const ContentList: React.FC = () => {
   );
 };
 
-export default ContentList; 
+export default ContentList;

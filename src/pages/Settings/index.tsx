@@ -10,67 +10,40 @@ import {
   MenuItem,
   InputLabel,
   Grid,
-  Button,
   CircularProgress,
 } from '@mui/material';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNotification } from '../../contexts/NotificationContext';
-import type { UserSettings, UpdateSettingsRequest } from '../../types/settings';
-import { fetchSettings, updateSettings } from '../../services/api';
+import { settingsApi } from '../../services/api';
+import type { Settings } from '../../types/api';
 
 const Settings: React.FC = () => {
   const { showNotification } = useNotification();
   const queryClient = useQueryClient();
 
-  const { data: settings, isLoading } = useQuery<UserSettings>({
+  const { data: settings, isLoading } = useQuery<Settings>({
     queryKey: ['settings'],
-    queryFn: fetchSettings,
+    queryFn: async () => {
+      const response = await settingsApi.get();
+      return response.data;
+    }
   });
 
   const mutation = useMutation({
-    mutationFn: updateSettings,
+    mutationFn: async (newSettings: Settings) => {
+      const response = await settingsApi.update(newSettings);
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['settings'] });
-      showNotification({
-        type: 'success',
-        message: 'Settings updated successfully',
-      });
+      showNotification('Settings updated successfully', 'success');
     },
     onError: () => {
-      showNotification({
-        type: 'error',
-        message: 'Failed to update settings',
-      });
+      showNotification('Failed to update settings', 'error');
     },
   });
 
-  const handleThemeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    mutation.mutate({
-      theme: event.target.checked ? 'dark' : 'light',
-    });
-  };
-
-  const handleNotificationChange = (key: keyof UserSettings['notifications']) => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    mutation.mutate({
-      notifications: {
-        ...settings?.notifications,
-        [key]: event.target.checked,
-      },
-    });
-  };
-
-  const handleDensityChange = (event: any) => {
-    mutation.mutate({
-      displayPreferences: {
-        ...settings?.displayPreferences,
-        density: event.target.value,
-      },
-    });
-  };
-
-  if (isLoading) {
+  if (isLoading || !settings) {
     return <CircularProgress />;
   }
 
@@ -89,7 +62,10 @@ const Settings: React.FC = () => {
               control={
                 <Switch
                   checked={settings?.theme === 'dark'}
-                  onChange={handleThemeChange}
+                  onChange={(e) => mutation.mutate({ 
+                    ...settings,
+                    theme: e.target.checked ? 'dark' : 'light' 
+                  })}
                 />
               }
               label="Dark Mode"
@@ -105,7 +81,15 @@ const Settings: React.FC = () => {
               control={
                 <Switch
                   checked={settings?.notifications.email}
-                  onChange={handleNotificationChange('email')}
+                  onChange={(e) => 
+                    mutation.mutate({
+                      ...settings,
+                      notifications: {
+                        ...settings?.notifications,
+                        email: e.target.checked
+                      }
+                    })
+                  }
                 />
               }
               label="Email Notifications"
@@ -114,7 +98,15 @@ const Settings: React.FC = () => {
               control={
                 <Switch
                   checked={settings?.notifications.push}
-                  onChange={handleNotificationChange('push')}
+                  onChange={(e) => 
+                    mutation.mutate({
+                      ...settings,
+                      notifications: {
+                        ...settings?.notifications,
+                        push: e.target.checked
+                      }
+                    })
+                  }
                 />
               }
               label="Push Notifications"
@@ -130,7 +122,13 @@ const Settings: React.FC = () => {
               <InputLabel>Density</InputLabel>
               <Select
                 value={settings?.displayPreferences.density}
-                onChange={handleDensityChange}
+                onChange={(e) => mutation.mutate({
+                  ...settings,
+                  displayPreferences: {
+                    ...settings?.displayPreferences,
+                    density: e.target.value as Settings['displayPreferences']['density'],
+                  },
+                })}
                 label="Density"
               >
                 <MenuItem value="comfortable">Comfortable</MenuItem>
@@ -145,4 +143,4 @@ const Settings: React.FC = () => {
   );
 };
 
-export default Settings; 
+export default Settings;
