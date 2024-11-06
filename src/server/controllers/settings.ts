@@ -1,27 +1,34 @@
 import { Request, Response } from 'express';
 import { SettingsModel } from '../models/Settings.js';
-import AppError from '../utils/AppError.js';
 
 export class SettingsController {
   async getSettings(req: Request, res: Response) {
     try {
-      const settings = await SettingsModel.findOne({ userId: req.user!.id });
+      let settings = await SettingsModel.findOne({ userId: req.user!.id });
       
       if (!settings) {
         // Create default settings if none exist
-        const defaultSettings = await SettingsModel.create({
-          userId: req.user!.id
+        settings = await SettingsModel.create({
+          userId: req.user!.id,
+          theme: 'light',
+          notifications: {
+            email: true,
+            push: true,
+            contentUpdates: true,
+            systemAlerts: true
+          },
+          displayPreferences: {
+            density: 'comfortable',
+            language: 'en',
+            timezone: 'UTC'
+          }
         });
-        return res.json(defaultSettings);
       }
       
       res.json(settings);
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: 'Failed to get settings' });
-      }
+      console.error('Settings Error:', error);
+      res.status(500).json({ message: 'Failed to fetch settings' });
     }
   }
 
@@ -35,11 +42,8 @@ export class SettingsController {
       
       res.json(settings);
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: 'Failed to update settings' });
-      }
+      console.error('Settings Update Error:', error);
+      res.status(500).json({ message: 'Failed to update settings' });
     }
   }
 } 

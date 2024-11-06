@@ -1,36 +1,35 @@
 export interface DashboardStats {
-  totalContent: number;
-  totalUsers: number;
   userMetrics: {
+    totalUsers: number;
     activeUsers: number;
-    newUsers: Array<{
+    newUsers: {
       date: string;
       count: number;
-    }>;
+    }[];
   };
   contentMetrics: {
     totalContent: number;
     publishedContent: number;
-    contentByCategory: Array<{
+    contentByCategory: {
       category: string;
       count: number;
-    }>;
+    }[];
   };
   engagementMetrics: {
     totalViews: number;
     averageTimeSpent: number;
-    popularContent: Array<{
+    popularContent: {
       title: string;
       views: number;
-    }>;
+    }[];
   };
-  recentActivity: Array<{
+  recentActivity: {
     id: string;
     action: 'create' | 'update' | 'delete';
     timestamp: Date;
     userId?: string;
     contentId?: string;
-  }>;
+  }[];
 }
 
 export interface Content {
@@ -59,10 +58,21 @@ export interface LoginResponse {
 }
 
 export interface AnalyticsData {
-  views: number;
-  uniqueVisitors: number;
-  averageTime: number;
-  bounceRate: number;
+  userMetrics: {
+    totalUsers: number;
+    activeUsers: number;
+    newUsers: Array<{ date: string; count: number }>;
+  };
+  contentMetrics: {
+    totalContent: number;
+    publishedContent: number;
+    contentByCategory: Array<{ category: string; count: number }>;
+  };
+  engagementMetrics: {
+    totalViews: number;
+    averageTimeSpent: number;
+    popularContent: Array<{ title: string; views: number }>;
+  };
 }
 
 export interface Settings {
@@ -78,6 +88,11 @@ export interface Settings {
     language: string;
     timezone: string;
   };
+  profile: {
+    avatarUrl?: string;
+    bio?: string;
+    location?: string;
+  };
 }
 
 export interface SearchResults {
@@ -85,4 +100,4 @@ export interface SearchResults {
   total: number;
   page: number;
   pageSize: number;
-} 
+}

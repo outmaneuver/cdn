@@ -1,16 +1,20 @@
 import { Document, Types } from 'mongoose';
+import type { User } from './user';
 
-export interface User extends Document {
-  _id: Types.ObjectId;
-  email: string;
-  password: string;
-  name?: string;
-  role: 'admin' | 'user';
-  lastActive: Date;
-  username?: string;
-  displayName?: string;
-  avatarUrl?: string;
-  profileViews: number;
+export interface Settings extends Document {
+  userId: User['_id'];
+  theme: 'light' | 'dark';
+  notifications: {
+    email: boolean;
+    push: boolean;
+    contentUpdates: boolean;
+    systemAlerts: boolean;
+  };
+  displayPreferences: {
+    density: 'comfortable' | 'compact' | 'standard';
+    language: string;
+    timezone: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -54,4 +58,6 @@ export interface DashboardMetrics {
       views: number;
     }[];
   };
-} 
+}
+
+export type { User };

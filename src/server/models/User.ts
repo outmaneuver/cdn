@@ -1,7 +1,20 @@
-import mongoose from 'mongoose';
-import type { User } from '../types/index.js';
+import mongoose, { Document } from 'mongoose';
 
-const userSchema = new mongoose.Schema<User>({
+export interface UserDocument extends Document {
+  email: string;
+  password: string;
+  name?: string;
+  role: 'admin' | 'user';
+  lastActive: Date;
+  username?: string;
+  displayName?: string;
+  avatarUrl?: string;
+  profileViews: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const userSchema = new mongoose.Schema<UserDocument>({
   email: {
     type: String,
     required: [true, 'Email is required'],
@@ -51,4 +64,4 @@ const userSchema = new mongoose.Schema<User>({
   timestamps: true,
 });
 
-export const UserModel = mongoose.model<User>('User', userSchema); 
+export const UserModel = mongoose.model<UserDocument>('User', userSchema); 

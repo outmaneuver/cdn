@@ -1,24 +1,35 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { UserSettings } from '../types/settings';
+import mongoose from 'mongoose';
+import type { Settings } from '../types/index.js';
 
-export interface SettingsDocument extends Document, UserSettings {}
-
-const settingsSchema = new Schema({
-  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  maxFileSize: { type: Number, default: 5 * 1024 * 1024 }, // 5MB default
-  allowedFileTypes: { type: [String], default: ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'] },
-  uploadEndpoint: { type: String, required: true },
-  customDomain: { type: String },
-  notificationPreferences: {
-    email: { type: Boolean, default: true },
-    desktop: { type: Boolean, default: true }
+const settingsSchema = new mongoose.Schema<Settings>({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    unique: true
   },
-  securitySettings: {
-    twoFactorEnabled: { type: Boolean, default: false },
-    apiKeyEnabled: { type: Boolean, default: false }
+  theme: {
+    type: String,
+    enum: ['light', 'dark'],
+    default: 'light'
+  },
+  notifications: {
+    email: { type: Boolean, default: true },
+    push: { type: Boolean, default: true },
+    contentUpdates: { type: Boolean, default: true },
+    systemAlerts: { type: Boolean, default: true }
+  },
+  displayPreferences: {
+    density: {
+      type: String,
+      enum: ['comfortable', 'compact', 'standard'],
+      default: 'comfortable'
+    },
+    language: { type: String, default: 'en' },
+    timezone: { type: String, default: 'UTC' }
   }
 }, {
   timestamps: true
 });
 
-export const SettingsModel = mongoose.model<SettingsDocument>('Settings', settingsSchema);
+export const SettingsModel = mongoose.model<Settings>('Settings', settingsSchema);

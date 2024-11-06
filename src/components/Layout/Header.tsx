@@ -9,16 +9,18 @@ import {
   MenuItem,
   Avatar,
   Divider,
+  ListItemIcon,
+  Badge,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
+  Person as PersonIcon,
   Settings as SettingsIcon,
-  Key as KeyIcon,
-  Upload as UploadIcon,
+  Logout as LogoutIcon,
+  Notifications as NotificationsIcon,
 } from '@mui/icons-material';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { downloadShareXConfig } from '../../utils/sharex.js';
 
 const Header: React.FC = () => {
   const { logout, user } = useAuth();
@@ -33,76 +35,104 @@ const Header: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/login');
-    handleClose();
-  };
-
-  const handleGenerateShareX = async () => {
-    const config = await downloadShareXConfig(user!.id);
-    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'sharex-config.sxcu';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-    handleClose();
   };
 
   return (
-    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    <AppBar 
+      position="fixed" 
+      color="default" 
+      elevation={1}
+      sx={{ 
+        zIndex: (theme) => theme.zIndex.drawer + 1,
+        bgcolor: 'background.paper'
+      }}
+    >
       <Toolbar>
         <IconButton
-          color="inherit"
           edge="start"
+          color="inherit"
+          aria-label="menu"
           sx={{ mr: 2, display: { sm: 'none' } }}
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+        
+        <Typography variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
           Content Management System
         </Typography>
+
         {user && (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              onClick={handleMenu}
-              sx={{ padding: 0.5 }}
-            >
-              <Avatar
-                alt={user.name || user.email}
-                src={user.avatarUrl}
-                sx={{ 
-                  width: 40, 
-                  height: 40,
-                  border: '2px solid white',
-                  '&:hover': {
-                    border: '2px solid #e0e0e0'
-                  }
-                }}
-              />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <IconButton color="inherit">
+              <Badge badgeContent={4} color="error">
+                <NotificationsIcon />
+              </Badge>
             </IconButton>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="subtitle2" noWrap>
+                {user.name || user.email}
+              </Typography>
+              <IconButton
+                onClick={handleMenu}
+                size="small"
+                sx={{ ml: 2 }}
+                aria-controls={Boolean(anchorEl) ? 'account-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
+              >
+                <Avatar
+                  src={user.avatarUrl}
+                  sx={{ width: 32, height: 32 }}
+                />
+              </IconButton>
+            </Box>
+
             <Menu
               anchorEl={anchorEl}
+              id="account-menu"
               open={Boolean(anchorEl)}
               onClose={handleClose}
+              onClick={handleClose}
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: 'visible',
+                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                  mt: 1.5,
+                  '& .MuiAvatar-root': {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                },
+              }}
             >
-              <MenuItem onClick={() => { navigate('/settings/profile'); handleClose(); }}>
-                <SettingsIcon sx={{ mr: 1 }} /> Profile Settings
+              <MenuItem onClick={() => navigate('/profile')}>
+                <ListItemIcon>
+                  <PersonIcon fontSize="small" />
+                </ListItemIcon>
+                Profile
               </MenuItem>
-              <MenuItem onClick={() => { navigate('/settings/security'); handleClose(); }}>
-                <KeyIcon sx={{ mr: 1 }} /> Security Settings
-              </MenuItem>
-              <MenuItem onClick={handleGenerateShareX}>
-                <UploadIcon sx={{ mr: 1 }} /> Generate ShareX Config
+              <MenuItem onClick={() => navigate('/settings')}>
+                <ListItemIcon>
+                  <SettingsIcon fontSize="small" />
+                </ListItemIcon>
+                Settings
               </MenuItem>
               <Divider />
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              <MenuItem onClick={handleLogout}>
+                <ListItemIcon>
+                  <LogoutIcon fontSize="small" />
+                </ListItemIcon>
+                Logout
+              </MenuItem>
             </Menu>
           </Box>
         )}
@@ -111,4 +141,4 @@ const Header: React.FC = () => {
   );
 };
 
-export default Header; 
+export default Header;

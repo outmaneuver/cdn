@@ -1,7 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import Layout from '@/components/Layout';
 import LandingPage from '@/pages/LandingPage';
 import Login from '@/pages/Auth/Login';
 import Register from '@/pages/Auth/Register';
@@ -22,11 +21,11 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     return <Navigate to="/login" replace />;
   }
 
-  return <Layout>{children}</Layout>;
+  return children;
 };
 
 const AppRoutes: React.FC = () => {
-  const { user } = useAuth();
+  useAuth();
 
   return (
     <Routes>

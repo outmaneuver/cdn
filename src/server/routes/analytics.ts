@@ -5,10 +5,13 @@ import { authenticate } from '../middleware/auth.js';
 const router = express.Router();
 const analyticsController = new AnalyticsController();
 
-// Protect all analytics routes
+// Apply authentication middleware to all analytics routes
 router.use(authenticate);
 
-router.get('/dashboard', analyticsController.getAnalytics.bind(analyticsController));
+// Analytics routes
+router.get('/', analyticsController.getAnalytics.bind(analyticsController));
+router.get('/dashboard', analyticsController.getDashboardStats.bind(analyticsController));
 router.get('/content/:id', analyticsController.getContentStats.bind(analyticsController));
+router.get('/user/:id', analyticsController.getUserStats.bind(analyticsController));
 
-export { router as analyticsRouter };
+export const analyticsRouter = router;

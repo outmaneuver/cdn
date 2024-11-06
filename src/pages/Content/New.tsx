@@ -1,11 +1,20 @@
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Box, TextField, Button, Paper, Typography, CircularProgress, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+// src/pages/Content/New.tsx
+import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  Box,
+  Paper,
+  TextField,
+  Button,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from '@mui/material';
 import { contentApi } from '@/services/api';
 import { useNotification } from '@/contexts/NotificationContext';
-import type { Content } from '@/types/api';
 
 interface ContentForm {
   title: string;
@@ -14,52 +23,32 @@ interface ContentForm {
   category?: string;
 }
 
-const ContentEdit: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+export default function NewContent() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { showNotification } = useNotification();
-  const { control, handleSubmit, reset } = useForm<ContentForm>();
-
-  const { isLoading } = useQuery({
-    queryKey: ['content', id],
-    queryFn: () => contentApi.getById(id!),
-    enabled: !!id,
-    select: (data: Content) => {
-      reset({
-        title: data.title,
-        body: data.body,
-        status: data.status,
-        category: data.category,
-      });
-      return data;
+  const { control, handleSubmit } = useForm<ContentForm>({
+    defaultValues: {
+      status: 'draft'
     }
   });
 
   const mutation = useMutation({
-    mutationFn: (data: ContentForm) => contentApi.update(id!, data),
+    mutationFn: contentApi.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['content'] });
-      showNotification('Content updated successfully', 'success');
+      showNotification('Content created successfully', 'success');
       navigate('/content');
     },
     onError: () => {
-      showNotification('Failed to update content', 'error');
-    },
+      showNotification('Failed to create content', 'error');
+    }
   });
-
-  if (isLoading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
 
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
-        Edit Content
+        Create New Content
       </Typography>
       <Paper sx={{ p: 3 }}>
         <form onSubmit={handleSubmit((data) => mutation.mutate(data))}>
@@ -96,6 +85,20 @@ const ContentEdit: React.FC = () => {
             )}
           />
           <Controller
+            name="category"
+            control={control}
+            render={({ field }) => (
+              <FormControl fullWidth margin="normal">
+                <InputLabel>Category</InputLabel>
+                <Select {...field} label="Category">
+                  <MenuItem value="blog">Blog</MenuItem>
+                  <MenuItem value="news">News</MenuItem>
+                  <MenuItem value="tutorial">Tutorial</MenuItem>
+                </Select>
+              </FormControl>
+            )}
+          />
+          <Controller
             name="status"
             control={control}
             render={({ field }) => (
@@ -114,7 +117,7 @@ const ContentEdit: React.FC = () => {
               variant="contained"
               disabled={mutation.isPending}
             >
-              {mutation.isPending ? 'Saving...' : 'Save Changes'}
+              Create Content
             </Button>
             <Button
               variant="outlined"
@@ -127,6 +130,4 @@ const ContentEdit: React.FC = () => {
       </Paper>
     </Box>
   );
-};
-
-export default ContentEdit; 
+}

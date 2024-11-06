@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { CloudUpload } from '@mui/icons-material';
@@ -18,7 +18,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   accept = ['image/*', 'application/pdf'],
   maxSize = 5242880, // 5MB
 }) => {
-  const [uploading, setUploading] = React.useState(false);
+  const [uploading, setUploading] = useState(false);
   const { showNotification } = useNotification();
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -80,4 +80,4 @@ const FileUpload: React.FC<FileUploadProps> = ({
   );
 };
 
-export default FileUpload; 
+export default FileUpload;

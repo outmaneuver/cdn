@@ -30,3 +30,8 @@ api.interceptors.response.use(
     return Promise.reject(apiError);
   }
 );
+
+export const fetchDashboardStats = async (): Promise<DashboardStats> => {
+  const { data } = await api.get<DashboardStats>('/api/dashboard/stats');
+  return data;
+};

@@ -19,7 +19,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const drawerWidth = 240;
 
 const menuItems = [
-  { text: 'Dashboard', icon: DashboardIcon, path: '/' },
+  { text: 'Dashboard', icon: DashboardIcon, path: '/dashboard' },
   { text: 'Content', icon: ContentIcon, path: '/content' },
   { text: 'Analytics', icon: AnalyticsIcon, path: '/analytics' },
   { text: 'Settings', icon: SettingsIcon, path: '/settings' },

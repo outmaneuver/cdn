@@ -1,38 +1,20 @@
 import React from 'react';
-import { Grid, Paper, Box, Typography, CircularProgress } from '@mui/material';
+import { Grid, Box, Typography, Paper, CircularProgress, Container, Avatar } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell
-} from 'recharts';
-import { fetchDashboardStats } from '@/services/api';
-import { DashboardStats } from '@/types/api';
-import RecentActivityList from '../../components/Dashboard/RecentActivityList';
-import QuickActions from '../../components/Dashboard/QuickActions';
-import StatsCards from '../../components/Dashboard/StatsCards';
-
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
-// Define the user distribution data type
-interface UserDistributionData {
-  name: string;
-  value: number;
-}
+import { analyticsApi } from '@/services/api';
+import { useAuth } from '@/hooks/useAuth';
+import type { DashboardStats } from '@/types/api';
+import StatsCards from '@/components/Dashboard/StatsCards';
+import RecentActivityList from '@/components/Dashboard/RecentActivityList';
+import QuickActions from '@/components/Dashboard/QuickActions';
+import Chart from '@/components/Analytics/Chart';
 
 const Dashboard: React.FC = () => {
+  const { user } = useAuth();
   const { data: stats, isLoading } = useQuery<DashboardStats>({
     queryKey: ['dashboardStats'],
-    queryFn: fetchDashboardStats
+    queryFn: analyticsApi.getDashboardStats
   });
-
-  // Transform userMetrics into pie chart data
-  const userDistributionData: UserDistributionData[] = React.useMemo(() => {
-    if (!stats?.userMetrics) return [];
-    return [
-      { name: 'Active Users', value: stats.userMetrics.activeUsers },
-      { name: 'New Users', value: stats.userMetrics.newUsers.length }
-    ];
-  }, [stats?.userMetrics]);
 
   if (isLoading) {
     return (
@@ -43,78 +25,136 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <Box p={3}>
+    <Container maxWidth="xl">
+      {/* Welcome Section */}
+      <Box 
+        sx={{ 
+          mb: 4,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          p: 3,
+          borderRadius: 2,
+          bgcolor: 'background.paper',
+          boxShadow: 1
+        }}
+      >
+        <Avatar
+          src={user?.avatarUrl}
+          sx={{ width: 56, height: 56 }}
+        />
+        <Box>
+          <Typography variant="h4" fontWeight="bold">
+            Welcome back, {user?.name || 'User'}
+          </Typography>
+          <Typography variant="subtitle1" color="text.secondary">
+            Here's what's happening with your content today
+          </Typography>
+        </Box>
+      </Box>
+
       <Grid container spacing={3}>
-        {/* Stats Cards */}
+        {/* Quick Actions */}
+        <Grid item xs={12}>
+          <QuickActions />
+        </Grid>
+
+        {/* Stats Overview */}
         <Grid item xs={12}>
           <StatsCards stats={stats} />
         </Grid>
 
-        {/* Charts */}
-        <Grid item xs={12} md={8}>
-          <Paper sx={{ p: 2, height: '400px' }}>
-            <Typography variant="h6" gutterBottom>Content Analytics</Typography>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={stats?.contentMetrics.contentByCategory}
-                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="category" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="count" fill="#8884d8" />
-              </BarChart>
-            </ResponsiveContainer>
-          </Paper>
-        </Grid>
-
-        {/* User Distribution */}
-        <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 2, height: '400px' }}>
-            <Typography variant="h6" gutterBottom>User Distribution</Typography>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={userDistributionData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {userDistributionData.map((_entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={COLORS[index % COLORS.length]} 
-                    />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+        {/* Main Content Area */}
+        <Grid item xs={12} lg={8}>
+          <Paper 
+            sx={{ 
+              p: 3, 
+              height: '100%',
+              minHeight: 400,
+              bgcolor: 'background.paper',
+              borderRadius: 2
+            }}
+          >
+            <Typography variant="h6" gutterBottom>
+              User Growth Trends
+            </Typography>
+            <Chart
+              data={stats?.userMetrics.newUsers || []}
+              dataKey="count"
+              xAxisKey="date"
+              color="#1976d2"
+              title="User Growth Trends"
+            />
           </Paper>
         </Grid>
 
         {/* Recent Activity */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>Recent Activity</Typography>
+        <Grid item xs={12} lg={4}>
+          <Paper 
+            sx={{ 
+              p: 3,
+              height: '100%',
+              minHeight: 400,
+              maxHeight: 480,
+              overflow: 'auto',
+              bgcolor: 'background.paper',
+              borderRadius: 2
+            }}
+          >
+            <Typography variant="h6" gutterBottom>
+              Recent Activity
+            </Typography>
             <RecentActivityList activities={stats?.recentActivity || []} />
           </Paper>
         </Grid>
 
-        {/* Quick Actions */}
+        {/* Additional Charts */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>Quick Actions</Typography>
-            <QuickActions />
+          <Paper 
+            sx={{ 
+              p: 3,
+              minHeight: 350,
+              bgcolor: 'background.paper',
+              borderRadius: 2
+            }}
+          >
+            <Typography variant="h6" gutterBottom>
+              Content Distribution
+            </Typography>
+            <Chart
+              data={stats?.contentMetrics.contentByCategory || []}
+              title="Content Distribution"
+              dataKey="count"
+              xAxisKey="category"
+              color="#2e7d32"
+            />
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Paper 
+            sx={{ 
+              p: 3,
+              minHeight: 350,
+              bgcolor: 'background.paper',
+              borderRadius: 2
+            }}
+          >
+            <Typography variant="h6" gutterBottom>
+              Popular Content
+            </Typography>
+            <Chart
+              data={stats?.engagementMetrics.popularContent || []}
+              title="Popular Content"
+              dataKey="views"
+              xAxisKey="title"
+              color="#ed6c02"
+            />
           </Paper>
         </Grid>
       </Grid>
-    </Box>
+    </Container>
   );
 };
 
-export default Dashboard; 
+export default Dashboard;
