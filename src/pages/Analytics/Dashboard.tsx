@@ -1,5 +1,4 @@
 // src/pages/Analytics/Dashboard.tsx
-import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Grid, CircularProgress } from '@mui/material';
 import Chart from '@/components/Analytics/Chart';
@@ -10,8 +9,8 @@ export default function Dashboard() {
   const { data: metrics, isLoading, error } = useQuery<AnalyticsData>({
     queryKey: ['analytics', 'dashboard'],
     queryFn: async () => {
-      const response = await analyticsApi.getDashboardMetrics();
-      return response.data;
+      const response = await analyticsApi.getAnalytics();
+      return response;
     }
   });
 
